@@ -1,0 +1,10 @@
+---
+- name: Install Calico CNI plugin
+  hosts: k8s_nodes[0]
+  become: yes
+
+  tasks:
+    - name: Install Calico network
+      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf

@@ -1,0 +1,14 @@
+---
+- name: Provision EC2 instance
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Launch EC2
+      amazon.aws.ec2_instance:
+        name: "easypay-node"
+        region: ap-south-1
+        instance_type: t2.medium
+        image_id: ami-12345678
+        count: 1
+        key_name: mykey
+        wait: yes

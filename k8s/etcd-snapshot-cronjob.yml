@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-snapshot
+  namespace: infra
+spec:
+  schedule: "0 */6 * * *"  # every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: easypay-admin
+          containers:
+          - name: etcd-snapshot
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              # NOTE: This is a placeholder. In real setups you'd mount etcd certs and run etcdctl.
+              echo "Run etcdctl snapshot save /tmp/snap.db (requires etcd endpoint & certs)"
+              # then upload to S3 (aws cli) after configuring AWS creds via secret
+            env:
+            - name: AWS_DEFAULT_REGION
+              value: "ap-south-1"
+          restartPolicy: OnFailure

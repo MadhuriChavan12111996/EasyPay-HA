@@ -1,0 +1,16 @@
+---
+- name: Initialize Kubernetes control plane
+  hosts: k8s_nodes[0]
+  become: yes
+
+  tasks:
+    - name: Initialize cluster with kubeadm
+      shell: kubeadm init --pod-network-cidr=192.168.0.0/16
+      register: kubeadm_output
+      args:
+        creates: /etc/kubernetes/admin.conf
+
+    - name: Save kubeadm join command
+      copy:
+        content: "{{ kubeadm_output.stdout }}"
+        dest: /tmp/kubeadm-init.log

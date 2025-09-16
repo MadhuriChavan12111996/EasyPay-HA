@@ -1,0 +1,8 @@
+---
+- name: Join worker nodes to the cluster
+  hosts: k8s_nodes[1:]
+  become: yes
+
+  tasks:
+    - name: Run kubeadm join command
+      shell: "{{ hostvars[groups['k8s_nodes'][0]].kubeadm_join_command }}"

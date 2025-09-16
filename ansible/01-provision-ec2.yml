@@ -1,0 +1,26 @@
+---
+- name: Provision EC2 instances for Kubernetes cluster
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars/aws.yml
+
+  tasks:
+    - name: Launch EC2 instances
+      amazon.aws.ec2_instance:
+        key_name: "{{ key_name }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        region: "{{ region }}"
+        count: "{{ node_count }}"
+        security_groups: ["{{ security_group }}"]
+        wait: yes
+      register: ec2_instances
+
+    - name: Add new instances to host group
+      add_host:
+        hostname: "{{ item.public_ip_address }}"
+        groups: k8s_nodes
+      loop: "{{ ec2_instances.instances }}"
